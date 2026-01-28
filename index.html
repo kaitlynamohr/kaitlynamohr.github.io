@@ -16,12 +16,14 @@
       --bg-secondary: #1a1a1a;
       --bg-tertiary: #252525;
       --text-primary: #f5f5f5;
-      --text-secondary: #d0d0d0;
-      --accent-red: #ff3b3b;
-      --accent-yellow: #ffd93d;
-      --accent-red-dim: #ff3b3b33;
-      --accent-yellow-dim: #ffd93d33;
+      --text-secondary: #e5e5e0;
+      --accent-red: #ff4757;
+      --accent-amber: #ffa502;
+      --accent-red-dim: #ff475733;
+      --accent-amber-dim: #ffa50233;
       --border: #333;
+      --glow-red: rgba(255, 71, 87, 0.3);
+      --glow-amber: rgba(255, 165, 2, 0.3);
     }
 
     body {
@@ -29,6 +31,48 @@
       color: var(--text-primary);
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
       line-height: 1.6;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Add subtle text glow */
+    p, li {
+      text-shadow: 0 0 1px rgba(255, 255, 255, 0.1);
+    }
+
+    /* Animated Background */
+    .animated-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      background: 
+        radial-gradient(ellipse at 20% 30%, var(--glow-red) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 70%, var(--glow-amber) 0%, transparent 50%),
+        var(--bg-primary);
+      animation: gradientShift 15s ease infinite;
+    }
+
+    @keyframes gradientShift {
+      0%, 100% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+    }
+
+    /* Particle Canvas */
+    #particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
     }
 
     /* Navigation */
@@ -37,11 +81,11 @@
       top: 0;
       left: 0;
       right: 0;
-      background: var(--bg-secondary);
-      border-bottom: 1px solid var(--border);
+      background: rgba(26, 26, 26, 0.7);
+      border-bottom: 1px solid rgba(255, 71, 87, 0.2);
       z-index: 1000;
-      backdrop-filter: blur(10px);
-      background: rgba(26, 26, 26, 0.9);
+      backdrop-filter: blur(20px) saturate(180%);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
     }
 
     .nav-container {
@@ -56,15 +100,28 @@
     .logo {
       font-size: 1.25rem;
       font-weight: 700;
-      background: linear-gradient(135deg, var(--accent-red), var(--accent-yellow));
+      background: linear-gradient(135deg, var(--accent-red), var(--accent-amber));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      transition: opacity 0.3s;
+      transition: all 0.3s;
+      position: relative;
     }
 
-    .logo:hover {
-      opacity: 0.8;
+    .logo::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent-red), var(--accent-amber));
+      transform: scaleX(0);
+      transition: transform 0.3s;
+    }
+
+    .logo:hover::after {
+      transform: scaleX(1);
     }
 
     .nav-links {
@@ -88,8 +145,9 @@
       left: 0;
       width: 0;
       height: 2px;
-      background: linear-gradient(90deg, var(--accent-red), var(--accent-yellow));
-      transition: width 0.3s;
+      background: linear-gradient(90deg, var(--accent-red), var(--accent-amber));
+      transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 0 10px var(--glow-amber);
     }
 
     .nav-links a:hover {
@@ -117,10 +175,21 @@
     }
 
     .gradient-text {
-      background: linear-gradient(135deg, var(--accent-red), var(--accent-yellow));
+      background: linear-gradient(135deg, var(--accent-red), var(--accent-amber));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
+      animation: textShimmer 3s ease-in-out infinite;
+      background-size: 200% auto;
+    }
+
+    @keyframes textShimmer {
+      0%, 100% {
+        background-position: 0% center;
+      }
+      50% {
+        background-position: 100% center;
+      }
     }
 
     .hero p {
@@ -147,25 +216,47 @@
     }
 
     .btn-primary {
-      background: linear-gradient(135deg, var(--accent-red), var(--accent-yellow));
+      background: linear-gradient(135deg, var(--accent-red), var(--accent-amber));
       color: var(--bg-primary);
       box-shadow: 0 4px 20px var(--accent-red-dim);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+
+    .btn-primary:hover::before {
+      width: 300px;
+      height: 300px;
     }
 
     .btn-primary:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 30px var(--accent-red-dim);
+      box-shadow: 0 6px 30px var(--glow-red), 0 0 40px var(--glow-amber);
     }
 
     .btn-secondary {
-      background: var(--bg-tertiary);
+      background: rgba(37, 37, 37, 0.6);
       color: var(--text-primary);
       border: 1px solid var(--border);
+      backdrop-filter: blur(10px);
     }
 
     .btn-secondary:hover {
       border-color: var(--accent-red);
-      background: var(--bg-secondary);
+      background: rgba(37, 37, 37, 0.8);
+      box-shadow: 0 4px 20px var(--glow-red);
     }
 
     /* Main Content */
@@ -194,20 +285,35 @@
     .section-header .accent-line {
       flex: 1;
       height: 2px;
-      background: linear-gradient(90deg, var(--accent-red), transparent);
+      background: linear-gradient(90deg, var(--accent-red), var(--accent-amber), transparent);
+      position: relative;
+      box-shadow: 0 0 10px var(--glow-amber);
     }
 
     .see-all {
-      color: var(--accent-yellow);
+      color: var(--accent-amber);
       text-decoration: none;
       font-size: 1rem;
       font-weight: 600;
-      transition: color 0.3s;
+      transition: all 0.3s;
       white-space: nowrap;
+      position: relative;
+    }
+
+    .see-all::after {
+      content: '→';
+      margin-left: 0.5rem;
+      display: inline-block;
+      transition: transform 0.3s;
     }
 
     .see-all:hover {
       color: var(--accent-red);
+      text-shadow: 0 0 10px var(--glow-red);
+    }
+
+    .see-all:hover::after {
+      transform: translateX(4px);
     }
 
     /* Cards Grid */
@@ -218,13 +324,15 @@
     }
 
     .card {
-      background: var(--bg-secondary);
+      background: rgba(26, 26, 26, 0.6);
       border: 1px solid var(--border);
       border-radius: 12px;
       padding: 2rem;
-      transition: all 0.3s;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative;
       overflow: hidden;
+      backdrop-filter: blur(10px);
+      transform-style: preserve-3d;
     }
 
     .card::before {
@@ -234,19 +342,37 @@
       left: 0;
       right: 0;
       height: 3px;
-      background: linear-gradient(90deg, var(--accent-red), var(--accent-yellow));
+      background: linear-gradient(90deg, var(--accent-red), var(--accent-amber));
       transform: scaleX(0);
-      transition: transform 0.3s;
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(circle at 50% 0%, var(--glow-red) 0%, transparent 70%);
+      opacity: 0;
+      transition: opacity 0.4s;
     }
 
     .card:hover {
       border-color: var(--accent-red);
-      transform: translateY(-4px);
-      box-shadow: 0 8px 30px rgba(255, 59, 59, 0.1);
+      transform: translateY(-8px) rotateX(2deg);
+      box-shadow: 
+        0 20px 60px rgba(255, 71, 87, 0.2),
+        0 0 40px var(--glow-amber);
     }
 
     .card:hover::before {
       transform: scaleX(1);
+    }
+
+    .card:hover::after {
+      opacity: 0.1;
     }
 
     .card h3 {
@@ -283,16 +409,44 @@
     }
 
     .skill-category {
-      background: var(--bg-secondary);
+      background: rgba(26, 26, 26, 0.6);
       border: 1px solid var(--border);
       border-radius: 12px;
       padding: 2rem;
+      backdrop-filter: blur(10px);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+    }
+
+    .skills-container:hover .skill-category:not(:hover) {
+      opacity: 0.6;
+      transform: scale(0.98);
+    }
+
+    .skill-category:hover {
+      transform: scale(1.05);
+      border-color: var(--accent-amber);
+      box-shadow: 0 20px 60px var(--glow-amber);
+      background: rgba(26, 26, 26, 0.8);
+    }
+
+    .skill-icon {
+      width: 48px;
+      height: 48px;
+      margin-bottom: 1rem;
+      background: rgba(255, 165, 2, 0.1);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
     }
 
     .skill-category h3 {
       font-size: 1.25rem;
       margin-bottom: 1rem;
-      color: var(--accent-yellow);
+      color: var(--accent-amber);
+      text-shadow: 0 0 20px var(--glow-amber);
     }
 
     .skill-list {
@@ -303,10 +457,39 @@
       padding: 0.5rem 0;
       color: var(--text-secondary);
       border-bottom: 1px solid var(--bg-tertiary);
+      transition: all 0.3s;
     }
 
     .skill-list li:last-child {
       border-bottom: none;
+    }
+
+    .skill-list li.clickable {
+      cursor: pointer;
+      position: relative;
+      padding-left: 0.5rem;
+    }
+
+    .skill-list li.clickable::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 3px;
+      height: 0;
+      background: linear-gradient(180deg, var(--accent-red), var(--accent-amber));
+      transition: height 0.3s;
+    }
+
+    .skill-list li.clickable:hover {
+      color: var(--accent-amber);
+      text-shadow: 0 0 10px var(--glow-amber);
+      padding-left: 1rem;
+    }
+
+    .skill-list li.clickable:hover::before {
+      height: 100%;
     }
 
     /* Blog Posts */
@@ -317,17 +500,36 @@
     }
 
     .post-item {
-      background: var(--bg-secondary);
+      background: rgba(26, 26, 26, 0.6);
       border: 1px solid var(--border);
       border-radius: 12px;
       padding: 2rem;
-      transition: all 0.3s;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       cursor: pointer;
+      position: relative;
+      backdrop-filter: blur(10px);
+    }
+
+    .post-item::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: linear-gradient(180deg, var(--accent-red), var(--accent-amber));
+      transform: scaleY(0);
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .post-item:hover {
-      border-color: var(--accent-yellow);
-      transform: translateX(4px);
+      border-color: var(--accent-amber);
+      transform: translateX(8px);
+      box-shadow: -4px 0 20px var(--glow-amber);
+    }
+
+    .post-item:hover::before {
+      transform: scaleY(1);
     }
 
     .post-date {
@@ -343,10 +545,12 @@
 
     /* Footer */
     footer {
-      background: var(--bg-secondary);
-      border-top: 1px solid var(--border);
+      background: rgba(26, 26, 26, 0.7);
+      border-top: 1px solid rgba(255, 71, 87, 0.2);
       padding: 3rem 2rem;
       margin-top: 6rem;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.4);
     }
 
     .footer-content {
@@ -369,7 +573,8 @@
     }
 
     .footer-links a:hover {
-      color: var(--accent-red);
+      color: var(--accent-amber);
+      text-shadow: 0 0 10px var(--glow-amber);
     }
 
     /* Responsive */
@@ -395,6 +600,9 @@
   </style>
 </head>
 <body>
+  <div class="animated-bg"></div>
+  <canvas id="particles"></canvas>
+  
   <nav>
     <div class="nav-container">
       <div class="logo">KM</div>
@@ -498,29 +706,28 @@
         <div class="skill-category">
           <h3>Focus Areas</h3>
           <ul class="skill-list">
-            <li>Threat Intelligence</li>
-            <li>Honeypots & Adversary Infrastructure</li>
-            <li>Detection Engineering</li>
-            <li>Network Security</li>
+            <li class="clickable" onclick="window.location.href='/tag/threat-intelligence.html'">Threat Intelligence</li>
+            <li class="clickable" onclick="window.location.href='/tag/honeypots.html'">Honeypots & Adversary Infrastructure</li>
+            <li class="clickable" onclick="window.location.href='/tag/detection-engineering.html'">Detection Engineering</li>
+            <li class="clickable" onclick="window.location.href='/tag/network-security.html'">Network Security</li>
           </ul>
         </div>
         <div class="skill-category">
           <h3>Skills & Tools</h3>
           <ul class="skill-list">
-            <li>Linux & Windows Server Administration</li>
-            <li>Virtualization (Proxmox)</li>
-            <li>SIEM & Log Analysis</li>
-            <li>Python, SQL</li>
-            <li>MITRE ATT&CK Framework</li>
+            <li class="clickable" onclick="window.location.href='/tag/linux.html'">Linux & Windows Server Administration</li>
+            <li class="clickable" onclick="window.location.href='/tag/proxmox.html'">Virtualization (Proxmox)</li>
+            <li class="clickable" onclick="window.location.href='/tag/siem.html'">SIEM & Log Analysis</li>
+            <li class="clickable" onclick="window.location.href='/tag/python.html'">Python, SQL</li>
+            <li class="clickable" onclick="window.location.href='/tag/mitre-attack.html'">MITRE ATT&CK Framework</li>
           </ul>
         </div>
         <div class="skill-category">
           <h3>Education</h3>
           <ul class="skill-list">
-            <li>Heidelberg University</li>
-            <li>B.S. Cybersecurity (Self-Designed)</li>
-            <li>AI Scholars Program</li>
-            <li>Focus: CTI, Applied AI, Networked Systems</li>
+            <li class="clickable" onclick="window.open('https://www.heidelberg.edu/', '_blank')">Heidelberg University</li>
+            <li class="clickable" onclick="window.location.href='/self-designed-major.html'">B.S. Cybersecurity (Self-Designed)</li>
+            <li class="clickable" onclick="window.location.href='/projects/ai-scholars.html'">AI Scholars Program</li>
           </ul>
         </div>
       </div>
@@ -539,6 +746,87 @@
   </footer>
 
   <script>
+    // Particle System
+    const canvas = document.getElementById('particles');
+    const ctx = canvas.getContext('2d');
+    
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    
+    let mouseX = canvas.width / 2;
+    let mouseY = canvas.height / 2;
+    
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 3 + 1;
+        this.speedX = Math.random() * 0.5 - 0.25;
+        this.speedY = Math.random() * 0.5 - 0.25;
+        this.color = Math.random() > 0.5 ? 'rgba(255, 71, 87, 0.6)' : 'rgba(255, 165, 2, 0.6)';
+      }
+      
+      update() {
+        // Drift toward mouse slowly
+        const dx = mouseX - this.x;
+        const dy = mouseY - this.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        
+        if (distance < 200) {
+          this.x += dx * 0.002;
+          this.y += dy * 0.002;
+        }
+        
+        this.x += this.speedX;
+        this.y += this.speedY;
+        
+        // Wrap around edges
+        if (this.x > canvas.width) this.x = 0;
+        if (this.x < 0) this.x = canvas.width;
+        if (this.y > canvas.height) this.y = 0;
+        if (this.y < 0) this.y = canvas.height;
+      }
+      
+      draw() {
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Glow effect
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = this.color;
+      }
+    }
+    
+    const particles = [];
+    for (let i = 0; i < 50; i++) {
+      particles.push(new Particle());
+    }
+    
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(particle => {
+        particle.update();
+        particle.draw();
+      });
+      requestAnimationFrame(animate);
+    }
+    
+    animate();
+    
+    // Track mouse
+    document.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    });
+    
+    // Resize handler
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+
     // Smooth scroll for navigation
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       anchor.addEventListener('click', function (e) {
@@ -557,9 +845,11 @@
       const currentScroll = window.pageYOffset;
       
       if (currentScroll > 100) {
-        nav.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.5)';
+        nav.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.6)';
+        nav.style.borderBottomColor = 'rgba(255, 71, 87, 0.4)';
       } else {
-        nav.style.boxShadow = 'none';
+        nav.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.4)';
+        nav.style.borderBottomColor = 'rgba(255, 71, 87, 0.2)';
       }
       
       lastScroll = currentScroll;
