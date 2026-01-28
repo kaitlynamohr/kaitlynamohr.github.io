@@ -1,1 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cybersecurity (B.S.) | Kaitlyn Mohr</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
+    :root {
+      --bg-primary: #0a0a0a;
+      --bg-secondary: #1a1a1a;
+      --bg-tertiary: #252525;
+      --text-primary: #f5f5f5;
+      --text-secondary: #e5e5e0;
+      --accent-red: #ff4757;
+      --accent-amber: #ffa502;
+      --border: #333;
+      --glow-red: rgba(255, 71, 87, 0.3);
+      --glow-amber: rgba(255, 165, 2, 0.3);
+      --pillar-security: #ff4757;
+      --pillar-analytics: #ffa502;
+      --pillar-policy: #5f27cd;
+    }
+
+    body {
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    p, li {
+      text-shadow: 0 0 1px rgba(255, 255, 255, 0.1);
+    }
+
+    .animated-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      background: 
+        radial-gradient(ellipse at 20% 30%, var(--glow-red) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 70%, var(--glow-amber) 0%, transparent 50%),
+        var(--bg-primary);
+    }
+
+    #particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: rgba(26, 26, 26, 0.7);
+      border-bottom: 1px solid rgba(255, 71, 87, 0.2);
+      z-index: 1000;
+      backdrop-filter: blur(20px) saturate(180%);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1.5rem 2rem;
+    }
+
+    .back-link {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.3s;
+      font-weight: 600;
+    }
+
+    .back-link:hover {
+      color: var(--accent-amber);
+      text-shadow: 0 0 10px var(--glow-amber);
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 120px auto 4rem;
+      padding: 0 2rem;
+    }
+
+    .page-header {
+      margin-bottom: 3rem;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, var(--accent-red), var(--accent-amber));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      font-size: 1.25rem;
+      color: var(--text-secondary);
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 3rem;
+      border-bottom: 2px solid var(--border);
+      overflow-x: auto;
+    }
+
+    .tab {
+      padding: 1rem 2rem;
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      position: relative;
+      white-space: nowrap;
+    }
+
+    .tab::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent-red), var(--accent-amber));
+      transform: scaleX(0);
+      transition: transform 0.3s;
+    }
+
+    .tab:hover {
+      color: var(--text-primary);
+    }
+
+    .tab.active {
+      color: var(--accent-amber);
+      text-shadow: 0 0 10px var(--glow-amber);
+    }
+
+    .tab.active::after {
+      transform: scaleX(1);
+    }
+
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.4s;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h2 {
+      font-size: 2rem;
+      margin: 2.5rem 0 1.5rem;
+      color: var(--accent-amber);
+      position: relative;
+      padding-left: 1rem;
+      border-left: 3px solid var(--accent-red);
+    }
+
+    h3 {
+      font-size: 1.5rem;
+      margin: 2rem 0 1rem;
+      color: var(--text-primary);
+    }
+
+    p {
+      margin-bottom: 1.5rem;
+      color: var(--text-secondary);
+      font-size: 1.05rem;
+    }
+
+    ul, ol {
+      margin: 1.5rem 0;
+      padding-left: 2rem;
+      color: var(--text-secondary);
+    }
+
+    li {
+      margin-bottom: 0.75rem;
+    }
+
+    .highlight-box {
+      background: rgba(26, 26, 26, 0.6);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent-amber);
+      border-radius: 8px;
+      padding: 2rem;
+      margin: 2rem 0;
+      backdrop-filter: blur(10px);
+    }
+
+    /* Flowchart */
+    .flowchart {
+      margin: 2rem 0;
+    }
+
+    .semester-row {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .semester-label {
+      font-weight: 700;
+      color: var(--accent-amber);
+      padding-top: 0.5rem;
+    }
+
+    .courses {
+      display: grid;
+      gap: 0.75rem;
+    }
+
+    .course {
+      background: rgba(26, 26, 26, 0.6);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--pillar-security);
+      border-radius: 6px;
+      padding: 1rem;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s;
+    }
+
+    .course:hover {
+      transform: translateX(4px);
+      box-shadow: 0 4px 20px var(--glow-amber);
+    }
+
+    .course.analytics {
+      border-left-color: var(--pillar-analytics);
+    }
+
+    .course.policy {
+      border-left-color: var(--pillar-policy);
+    }
+
+    .course-code {
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.25rem;
+    }
+
+    .course-name {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    .course-hours {
+      font-size: 0.85rem;
+      color: var(--accent-amber);
+      margin-top: 0.25rem;
+    }
+
+    /* Pillars Legend */
+    .pillars-legend {
+      display: flex;
+      gap: 2rem;
+      margin: 2rem 0;
+      flex-wrap: wrap;
+    }
+
+    .pillar-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .pillar-color {
+      width: 24px;
+      height: 24px;
+      border-radius: 4px;
+    }
+
+    .pillar-color.security { background: var(--pillar-security); }
+    .pillar-color.analytics { background: var(--pillar-analytics); }
+    .pillar-color.policy { background: var(--pillar-policy); }
+
+    /* Comparison Table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 2rem 0;
+      background: rgba(26, 26, 26, 0.6);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+    }
+
+    thead {
+      background: var(--bg-tertiary);
+    }
+
+    th {
+      padding: 1rem;
+      text-align: left;
+      color: var(--accent-amber);
+      font-weight: 600;
+      border-bottom: 2px solid var(--border);
+    }
+
+    td {
+      padding: 1rem;
+      color: var(--text-secondary);
+      border-bottom: 1px solid var(--border);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tbody tr:hover {
+      background: rgba(37, 37, 37, 0.6);
+    }
+
+    .check { color: var(--accent-amber); font-weight: 700; }
+    .cross { color: var(--accent-red); font-weight: 700; }
+
+    /* Progress Timeline */
+    .timeline {
+      position: relative;
+      padding-left: 3rem;
+      margin: 2rem 0;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(180deg, var(--accent-red), var(--accent-amber));
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 2rem;
+      padding-left: 1rem;
+    }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -3rem;
+      top: 0.5rem;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--accent-amber);
+      box-shadow: 0 0 15px var(--glow-amber);
+    }
+
+    .timeline-item.completed::before {
+      background: var(--accent-amber);
+    }
+
+    .timeline-item.current::before {
+      background: var(--accent-red);
+      box-shadow: 0 0 20px var(--glow-red);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+
+    .timeline-date {
+      color: var(--accent-amber);
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .timeline-title {
+      color: var(--text-primary);
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .timeline-desc {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2rem;
+      }
+
+      .semester-row {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+      }
+
+      .tabs {
+        flex-wrap: wrap;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="animated-bg"></div>
+  <canvas id="particles"></canvas>
+
+  <nav>
+    <div class="nav-container">
+      <a href="/" class="back-link">← Back to Home</a>
+    </div>
+  </nav>
+
+  <main>
+    <div class="page-header">
+      <h1>Cybersecurity (B.S.)</h1>
+      <p class="subtitle">Self-Designed Major | Heidelberg University</p>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('overview')">Overview</button>
+      <button class="tab" onclick="switchTab('curriculum')">Curriculum</button>
+      <button class="tab" onclick="switchTab('comparison')">Comparison</button>
+      <button class="tab" onclick="switchTab('why-sdn')">Why SDN</button>
+    </div>
+
+    <!-- Overview Tab -->
+    <div class="tab-content active" id="overview">
+      <p>This Cybersecurity program originated as a formally approved Self-Designed Major at Heidelberg University and is now serving as the pilot framework for a permanent Cybersecurity degree program.</p>
+
+      <p>The program was created to address a structural gap: while Heidelberg offered strong coursework in Computer Science, Data Analytics, and Business, it did not offer a degree capable of preparing students for modern cybersecurity roles. Rather than dilute cybersecurity into unrelated majors, this program was designed intentionally, with cybersecurity as the primary discipline, not a concentration or afterthought.</p>
+
+      <div class="highlight-box">
+        <h3>Program Purpose</h3>
+        <p>To produce graduates who can:</p>
+        <ul>
+          <li>Secure and administer modern networked systems</li>
+          <li>Identify, analyze, and mitigate vulnerabilities</li>
+          <li>Conduct penetration testing and adversarial analysis</li>
+          <li>Apply data analytics to security problems</li>
+          <li>Understand cyber operations within national, legal, and organizational contexts</li>
+          <li>Communicate technical findings professionally</li>
+        </ul>
+      </div>
+
+      <h2>Academic Requirements</h2>
+      <ul>
+        <li><strong>27+ dedicated major credits</strong></li>
+        <li><strong>15+ credits at 300-400 level</strong></li>
+        <li>Coursework spanning multiple academic disciplines</li>
+        <li>Required junior-year applied experience (SDN 370/371/372)</li>
+        <li>Required senior-year capstone and portfolio (SDN 400)</li>
+      </ul>
+
+      <h2>Program Progress</h2>
+      <div class="timeline">
+        <div class="timeline-item completed">
+          <div class="timeline-date">Fall 2024</div>
+          <div class="timeline-title">Program Design & Approval</div>
+          <div class="timeline-desc">Developed curriculum, secured faculty mentors, submitted formal application</div>
+        </div>
+        <div class="timeline-item completed">
+          <div class="timeline-date">Fall 2025</div>
+          <div class="timeline-title">Program Launch</div>
+          <div class="timeline-desc">Began pilot implementation with foundational coursework</div>
+        </div>
+        <div class="timeline-item current">
+          <div class="timeline-date">Spring 2026</div>
+          <div class="timeline-title">Core Security Focus</div>
+          <div class="timeline-desc">Currently completing network security, penetration testing, and applied security coursework</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">2026-2027</div>
+          <div class="timeline-title">Advanced Studies & Internship</div>
+          <div class="timeline-desc">Junior-year experience, independent studies with industry professionals</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">Spring 2027</div>
+          <div class="timeline-title">Capstone & Graduation</div>
+          <div class="timeline-desc">Senior capstone project, portfolio completion, dual B.S. degrees</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">2027-2028</div>
+          <div class="timeline-title">Graduate Studies</div>
+          <div class="timeline-desc">MBA (Planned)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Curriculum Tab -->
+    <div class="tab-content" id="curriculum">
+      <p>The curriculum is structured around three integrated pillars, ensuring breadth without dilution.</p>
+
+      <div class="pillars-legend">
+        <div class="pillar-item">
+          <div class="pillar-color security"></div>
+          <span>Core Cybersecurity & Network Defense</span>
+        </div>
+        <div class="pillar-item">
+          <div class="pillar-color analytics"></div>
+          <span>Data Analytics for Cyber Operations</span>
+        </div>
+        <div class="pillar-item">
+          <div class="pillar-color policy"></div>
+          <span>Intelligence, Policy & Context</span>
+        </div>
+      </div>
+
+      <div class="flowchart">
+        <div class="semester-row">
+          <div class="semester-label">Fall 2025</div>
+          <div class="courses">
+            <div class="course analytics">
+              <div class="course-code">BSC 201</div>
+              <div class="course-name">Research Methods & Data Analysis</div>
+              <div class="course-hours">4 credits</div>
+            </div>
+            <div class="course analytics">
+              <div class="course-code">DAT 310</div>
+              <div class="course-name">Data Management & Visualization</div>
+              <div class="course-hours">3 credits</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="semester-row">
+          <div class="semester-label">Spring 2026</div>
+          <div class="courses">
+            <div class="course security">
+              <div class="course-code">CPS 345</div>
+              <div class="course-name">Computer & Network Security</div>
+              <div class="course-hours">3 credits</div>
+            </div>
+            <div class="course security">
+              <div class="course-code">CCPS 350</div>
+              <div class="course-name">Penetration Testing & Vulnerability Analysis</div>
+              <div class="course-hours">3 credits</div>
+            </div>
+            <div class="course security">
+              <div class="course-code">CCPS 350</div>
+              <div class="course-name">Applied Network Security</div>
+              <div class="course-hours">3 credits</div>
+            </div>
+            <div class="course analytics">
+              <div class="course-code">BUS 270</div>
+              <div class="course-name">Business Analytics Tools</div>
+              <div class="course-hours">3 credits</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="semester-row">
+          <div class="semester-label">2026-2027</div>
+          <div class="courses">
+            <div class="course security">
+              <div class="course-code">CPS 340</div>
+              <div class="course-name">System & Network Administration</div>
+              <div class="course-hours">3 credits</div>
+            </div>
+            <div class="course policy">
+              <div class="course-code">POL 324</div>
+              <div class="course-name">American Foreign Policy</div>
+              <div class="course-hours">3 credits</div>
+            </div>
+            <div class="course policy">
+              <div class="course-code">POL 389</div>
+              <div class="course-name">National Intelligence Operations</div>
+              <div class="course-hours">3 credits</div>
+            </div>
+            <div class="course analytics">
+              <div class="course-code">SOC 310</div>
+              <div class="course-name">Intermediate Data Science I</div>
+              <div class="course-hours">3 credits</div>
+            </div>
+            <div class="course analytics">
+              <div class="course-code">DAT 411</div>
+              <div class="course-name">Capstone Topics in Data Analytics</div>
+              <div class="course-hours">3 credits</div>
+            </div>
+            <div class="course">
+              <div class="course-code">SDN 370/371/372</div>
+              <div class="course-name">Junior Experience (Internship)</div>
+              <div class="course-hours">0-6 credits</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="semester-row">
+          <div class="semester-label">Spring 2027</div>
+          <div class="courses">
+            <div class="course">
+              <div class="course-code">SDN 400</div>
+              <div class="course-name">Senior Capstone & Portfolio</div>
+              <div class="course-hours">1 credit</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="highlight-box">
+        <h3>Independent Studies</h3>
+        <p>In addition to formal coursework, the program includes mentored independent study in advanced cybersecurity topics with industry professionals, including:</p>
+        <ul>
+          <li>Applied threat intelligence and adversary simulation</li>
+          <li>Advanced detection engineering</li>
+          <li>Real-world security operations</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Comparison Tab -->
+    <div class="tab-content" id="comparison">
+      <h2>Traditional Majors vs. SDN Cybersecurity</h2>
+      <p>This comparison shows why existing majors at Heidelberg could not meet cybersecurity career requirements without significant external remediation.</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Requirement</th>
+            <th>Computer Science</th>
+            <th>Data Analytics</th>
+            <th>SDN Cybersecurity</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Network Security Fundamentals</strong></td>
+            <td class="cross">✗ Limited</td>
+            <td class="cross">✗ Not covered</td>
+            <td class="check">✓ Core focus</td>
+          </tr>
+          <tr>
+            <td><strong>Penetration Testing & Vulnerability Analysis</strong></td>
+            <td class="cross">✗ Not offered</td>
+            <td class="cross">✗ Not offered</td>
+            <td class="check">✓ Dedicated coursework</td>
+          </tr>
+          <tr>
+            <td><strong>System Administration (Linux/Windows)</strong></td>
+            <td class="cross">✗ Minimal coverage</td>
+            <td class="cross">✗ Not covered</td>
+            <td class="check">✓ Required course</td>
+          </tr>
+          <tr>
+            <td><strong>Applied Data Analytics for Security</strong></td>
+            <td class="cross">✗ Not security-focused</td>
+            <td class="check">✓ Strong foundation</td>
+            <td class="check">✓ Security-applied analytics</td>
+          </tr>
+          <tr>
+            <td><strong>Threat Intelligence Operations</strong></td>
+            <td class="cross">✗ Not offered</td>
+            <td class="cross">✗ Not offered</td>
+            <td class="check">✓ Hands-on experience</td>
+          </tr>
+          <tr>
+            <td><strong>Cyber Policy & Intelligence Context</strong></td>
+            <td class="cross">✗ Not covered</td>
+            <td class="cross">✗ Not covered</td>
+            <td class="check">✓ Integrated pillar</td>
+          </tr>
+          <tr>
+            <td><strong>Industry-Mentored Independent Study</strong></td>
+            <td class="cross">✗ Not structured</td>
+            <td class="cross">✗ Not structured</td>
+            <td class="check">✓ Required component</td>
+          </tr>
+          <tr>
+            <td><strong>Hands-On Security Internship</strong></td>
+            <td class="cross">✗ Optional</td>
+            <td class="cross">✗ Optional</td>
+            <td class="check">✓ Required</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="highlight-box">
+        <h3>Career Preparation Gap</h3>
+        <p>Choosing Computer Science or Data Analytics would have required significant external remediation:</p>
+        <ul>
+          <li>Additional certifications (Security+, CEH, OSCP)</li>
+          <li>Self-study of network security fundamentals</li>
+          <li>Independent penetration testing practice</li>
+          <li>Supplementary coursework or bootcamps</li>
+          <li>Potential second degree or graduate program in cybersecurity</li>
+        </ul>
+        <p><strong>The SDN approach eliminates this gap by treating cybersecurity as the primary discipline from day one.</strong></p>
+      </div>
+    </div>
+
+    <!-- Why SDN Tab -->
+    <div class="tab-content" id="why-sdn">
+      <h2>Why This Program Had to Be Created</h2>
+      <p>Cybersecurity is not a subset of Computer Science. It is not an extension of Data Analytics. It is not equivalent to general Information Technology.</p>
+
+      <p>Cybersecurity is an <strong>operational, adversarial discipline</strong>. It requires fluency in systems, networks, threat behavior, defense mechanisms, and real-world constraints. Traditional majors fail here for predictable reasons:</p>
+
+      <ul>
+        <li><strong>Computer Science</strong> emphasizes algorithms, software development, and theory—not networks, attack surfaces, or defense</li>
+        <li><strong>Data Analytics</strong> emphasizes statistics and visualization—not systems, exploitation, or security operations</li>
+        <li><strong>IT-adjacent programs</strong> often stop at configuration and policy, without offensive or analytical depth</li>
+      </ul>
+
+      <p>Choosing an existing major would have required significant external remediation—certifications, independent study, or an additional degree—to reach baseline cybersecurity competence. That defeats the purpose of a four-year program.</p>
+
+      <div class="highlight-box">
+        <h3>The Solution: Intentional Program Design</h3>
+        <p>This program was not created for customization or convenience. It was created because <strong>no existing major could meet the requirements of cybersecurity education</strong> without compromise.</p>
+        <p>Creating this program ensured that cybersecurity was treated as the primary discipline—deliberately, rigorously, and with institutional accountability.</p>
+      </div>
+
+      <h2>Institutional Impact</h2>
+      <p>This program serves as the pilot framework for a permanent Cybersecurity degree at Heidelberg University. The pilot phase allows:</p>
+      <ul>
+        <li>Curriculum testing across departments</li>
+        <li>Validation of course sequencing and outcomes</li>
+        <li>Capstone and internship feedback to inform permanent program design</li>
+      </ul>
+
+      <p>The long-term objective is a fully named and standardized <strong>Cybersecurity (B.S.)</strong> program at Heidelberg University, built on this foundation.</p>
+
+      <div class="highlight-box">
+        <h3>Dual Degree Program</h3>
+        <p>Alongside the Cybersecurity (B.S.), I am concurrently completing a <strong>Data Analytics (B.S.)</strong> degree, with minors in Computer Science and Business Administration. Both degrees share a unified capstone project integrating security analytics and operational decision-making.</p>
+        <p><a href="/projects/capstone.html" style="color: var(--accent-amber); text-decoration: none;">View Capstone Project →</a></p>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Particle System
+    const canvas = document.getElementById('particles');
+    const ctx = canvas.getContext('2d');
+    
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    
+    let mouseX = canvas.width / 2;
+    let mouseY = canvas.height / 2;
+    
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 3 + 1;
+        this.speedX = Math.random() * 0.5 - 0.25;
+        this.speedY = Math.random() * 0.5 - 0.25;
+        this.color = Math.random() > 0.5 ? 'rgba(255, 71, 87, 0.6)' : 'rgba(255, 165, 2, 0.6)';
+      }
+      
+      update() {
+        const dx = mouseX - this.x;
+        const dy = mouseY - this.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        
+        if (distance < 200) {
+          this.x += dx * 0.002;
+          this.y += dy * 0.002;
+        }
+        
+        this.x += this.speedX;
+        this.y += this.speedY;
+        
+        if (this.x > canvas.width) this.x = 0;
+        if (this.x < 0) this.x = canvas.width;
+        if (this.y > canvas.height) this.y = 0;
+        if (this.y < 0) this.y = canvas.height;
+      }
+      
+      draw() {
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        ctx.arc(this.x, this
