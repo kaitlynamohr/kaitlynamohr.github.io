@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Machine Learning for Network Intrusion Detection | Kaitlyn Mohr</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-primary: #0a0a0a;
+      --bg-secondary: #1a1a1a;
+      --bg-tertiary: #252525;
+      --text-primary: #f5f5f5;
+      --text-secondary: #e5e5e0;
+      --accent-red: #ff4757;
+      --accent-amber: #ffa502;
+      --border: #333;
+      --glow-red: rgba(255, 71, 87, 0.3);
+      --glow-amber: rgba(255, 165, 2, 0.3);
+    }
+
+    body {
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.8;
+      overflow-x: hidden;
+    }
+
+    p, li {
+      text-shadow: 0 0 1px rgba(255, 255, 255, 0.1);
+    }
+
+    .animated-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      background: 
+        radial-gradient(ellipse at 20% 30%, var(--glow-red) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 70%, var(--glow-amber) 0%, transparent 50%),
+        var(--bg-primary);
+    }
+
+    #particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: rgba(26, 26, 26, 0.7);
+      border-bottom: 1px solid rgba(255, 71, 87, 0.2);
+      z-index: 1000;
+      backdrop-filter: blur(20px) saturate(180%);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+
+    .nav-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 1.5rem 2rem;
+    }
+
+    .back-link {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.3s;
+      font-weight: 600;
+    }
+
+    .back-link:hover {
+      color: var(--accent-amber);
+      text-shadow: 0 0 10px var(--glow-amber);
+    }
+
+    main {
+      max-width: 1000px;
+      margin: 120px auto 4rem;
+      padding: 0 2rem;
+    }
+
+    .page-header {
+      margin-bottom: 3rem;
+      padding-bottom: 2rem;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .report-meta {
+      display: flex;
+      gap: 2rem;
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      flex-wrap: wrap;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .meta-label {
+      color: var(--accent-amber);
+      font-weight: 600;
+    }
+
+    h1 {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+      line-height: 1.2;
+    }
+
+    .subtitle {
+      font-size: 1.25rem;
+      color: var(--text-secondary);
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .tag {
+      padding: 0.5rem 1rem;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    h2 {
+      font-size: 2rem;
+      margin: 3rem 0 1.5rem;
+      color: var(--text-primary);
+      position: relative;
+      padding-left: 1rem;
+      border-left: 3px solid var(--accent-red);
+    }
+
+    h3 {
+      font-size: 1.5rem;
+      margin: 2rem 0 1rem;
+      color: var(--accent-amber);
+    }
+
+    h4 {
+      font-size: 1.2rem;
+      margin: 1.5rem 0 0.75rem;
+      color: var(--text-primary);
+    }
+
+    p {
+      margin-bottom: 1.5rem;
+      color: var(--text-secondary);
+      font-size: 1.05rem;
+      background: rgba(26, 26, 26, 0.4);
+      padding: 1rem 1.5rem;
+      border-radius: 6px;
+      backdrop-filter: blur(5px);
+    }
+
+    ul, ol {
+      margin: 1.5rem 0;
+      padding-left: 2rem;
+      color: var(--text-secondary);
+      background: rgba(26, 26, 26, 0.4);
+      padding: 1rem 1.5rem 1rem 3rem;
+      border-radius: 6px;
+      backdrop-filter: blur(5px);
+    }
+
+    li {
+      margin-bottom: 0.75rem;
+    }
+
+    strong {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    em {
+      color: var(--accent-amber);
+      font-style: italic;
+    }
+
+    .highlight-box {
+      background: rgba(26, 26, 26, 0.6);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent-amber);
+      border-radius: 8px;
+      padding: 2rem;
+      margin: 2rem 0;
+      backdrop-filter: blur(10px);
+    }
+
+    .highlight-box h3 {
+      margin-top: 0;
+    }
+
+    .algorithm-box {
+      background: rgba(26, 26, 26, 0.6);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      backdrop-filter: blur(10px);
+    }
+
+    .algorithm-box h4 {
+      color: var(--accent-amber);
+      margin-top: 0;
+    }
+
+    .figure {
+      background: rgba(26, 26, 26, 0.6);
+      border: 2px dashed var(--border);
+      border-radius: 8px;
+      padding: 2rem;
+      margin: 2rem 0;
+      text-align: center;
+      backdrop-filter: blur(10px);
+    }
+
+    .figure-label {
+      color: var(--accent-red);
+      font-weight: 700;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .figure-instruction {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      font-style: italic;
+      background: rgba(255, 71, 87, 0.1);
+      padding: 1rem;
+      border-radius: 6px;
+      margin-top: 1rem;
+    }
+
+    .figure img {
+      max-width: 100%;
+      border-radius: 6px;
+      margin: 1rem 0;
+    }
+
+    .figure-caption {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      margin-top: 1rem;
+      font-style: italic;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 2rem 0;
+      background: rgba(26, 26, 26, 0.6);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+    }
+
+    thead {
+      background: var(--bg-tertiary);
+    }
+
+    th {
+      padding: 1rem;
+      text-align: left;
+      color: var(--accent-amber);
+      font-weight: 600;
+      border-bottom: 2px solid var(--border);
+    }
+
+    td {
+      padding: 1rem;
+      color: var(--text-secondary);
+      border-bottom: 1px solid var(--border);
+      font-size: 0.95rem;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tbody tr:hover {
+      background: rgba(37, 37, 37, 0.6);
+    }
+
+    .table-caption {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      font-style: italic;
+      margin-top: 1rem;
+      background: rgba(26, 26, 26, 0.4);
+      padding: 1rem 1.5rem;
+      border-radius: 6px;
+    }
+
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2rem;
+      }
+
+      h2 {
+        font-size: 1.5rem;
+      }
+
+      .report-meta {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="animated-bg"></div>
+  <canvas id="particles"></canvas>
+
+  <nav>
+    <div class="nav-container">
+      <a href="/" class="back-link">← Back to Research</a>
+    </div>
+  </nav>
+
+  <main>
+    <div class="page-header">
+      <div class="report-meta">
+        <div class="meta-item">
+          <span class="meta-label">Date:</span>
+          <span>October 20, 2025</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Category:</span>
+          <span>Case Study</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Course:</span>
+          <span>DAT 310: Data Management & Visualization</span>
+        </div>
+      </div>
+      <h1>Machine Learning for Network Intrusion Detection: Comparing Random Forest and k-NN Performance</h1>
+      <p class="subtitle">Evaluating classification algorithms on the NSL-KDD dataset</p>
+      <div class="tags">
+        <span class="tag">Machine Learning</span>
+        <span class="tag">Intrusion Detection</span>
+        <span class="tag">Random Forest</span>
+        <span class="tag">k-NN</span>
+      </div>
+    </div>
+
+    <h2>Introduction</h2>
+
+    <h3>Background</h3>
+    <p>Network intrusion detection represents a critical challenge in modern cybersecurity. As organizations increasingly rely on digital infrastructure, the ability to automatically identify malicious network activity becomes essential for protecting data and maintaining continuity of operations. Machine learning approaches offer promising solutions by learning patterns from historical network traffic data to detect both known and novel attack vectors.</p>
+
+    <h3>Research Question</h3>
+    <p>This study addresses the following primary research question: <strong>Can machine learning models effectively differentiate between normal and compromised network traffic by analyzing connection patterns and characteristics?</strong></p>
+
+    <h3>Dataset Description</h3>
+    <p>The analysis utilized the <strong>NSL-KDD dataset</strong>, an improved version of the original KDD Cup 1999 dataset designed specifically for evaluating intrusion detection systems. The dataset contains 125,973 training records and 22,544 test records, each characterized by 41 features representing various aspects of network connections. The dataset represents network traffic collected from a simulated military environment, providing a realistic testing ground for intrusion detection algorithms.</p>
+
+    <h2>Algorithm Selection and Justification</h2>
+
+    <div class="algorithm-box">
+      <h4>Algorithm 1: Random Forest</h4>
+      <p>Random Forest is a learning method in which the machine constructs multiple decision trees during training and outputs the mode of their predictions for classification tasks. Each tree is built using a random subset of features and training samples, which reduces the possibility of overfitting and improves overall performance.</p>
+      
+      <p><strong>Justification for Selection:</strong></p>
+      <ul>
+        <li><strong>Class Imbalance Handling:</strong> The NSL-KDD dataset has large class imbalance, with DoS attacks well represented but U2R and R2L having fewer than 100 examples each. Random Forest's ensemble approach helps mitigate bias toward majority classes.</li>
+        <li><strong>Feature Importance Analysis:</strong> Built-in feature importance metrics are valuable for security analysis, identifying which network characteristics most strongly indicate malicious activity.</li>
+        <li><strong>Mixed Data Type Support:</strong> The algorithm handles both numerical and categorical features, important as our dataset contains both types.</li>
+        <li><strong>Complex Relationship Modeling:</strong> Random Forest effectively models non-linear relationships in network attack traffic behavior, whereas simpler models would struggle due to complexity.</li>
+      </ul>
+    </div>
+
+    <div class="algorithm-box">
+      <h4>Algorithm 2: k-Nearest Neighbors (k-NN)</h4>
+      <p>k-Nearest Neighbors is an instance-based learning algorithm that classifies data points based on the majority class among their k nearest neighbors in the feature space. The algorithm uses distance metrics to determine proximity and makes predictions without building an explicit model during training.</p>
+      
+      <p><strong>Justification for Selection:</strong></p>
+      <ul>
+        <li><strong>Baseline Comparison:</strong> k-NN provides a baseline to evaluate the more sophisticated Random Forest approach.</li>
+        <li><strong>Localized Pattern Detection:</strong> Network intrusions may form localized clusters in feature space, and k-NN's specialized approach can capture these patterns effectively.</li>
+        <li><strong>No Training Phase:</strong> k-NN requires no training phase, making it easy to adapt to new patterns and update with fresh data.</li>
+        <li><strong>Interpretability:</strong> Classifications are based directly on historical examples, making the algorithm easy to explain to both technical and non-technical stakeholders.</li>
+      </ul>
+    </div>
+
+    <p>The combination of these two algorithms—one ensemble-based and one instance-based—provides comprehensive coverage of different machine learning paradigms and allows for performance comparison across methodologies.</p>
+
+    <h2>Analysis and Findings</h2>
+
+    <h3>Model Performance Summary</h3>
+    <p>Both algorithms were trained on the NSL-KDD training set (125,973 records) and evaluated on the test set (22,544 records). Table 1 summarizes the comparative performance metrics derived from the Test and Score widget.</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Model</th>
+          <th>Area Under Curve</th>
+          <th>Classification Accuracy</th>
+          <th>F1-Score</th>
+          <th>Precision</th>
+          <th>Recall</th>
+          <th>Matthew's Correlation Coefficient</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>k-NN</strong></td>
+          <td>25.048</td>
+          <td>0.950</td>
+          <td>0.948</td>
+          <td>0.946</td>
+          <td>0.950</td>
+          <td>0.935</td>
+        </tr>
+        <tr>
+          <td><strong>Random Forest</strong></td>
+          <td>25.310</td>
+          <td>0.978</td>
+          <td>0.976</td>
+          <td>0.976</td>
+          <td>0.978</td>
+          <td>0.972</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="table-caption">Table 1: Performance comparison of Random Forest and k-NN algorithms on NSL-KDD test set. Random Forest outperforms k-NN across all evaluated metrics.</p>
+
+    <div class="figure">
+      <span class="figure-label">Appendix A.1: Test & Score Results</span>
+      <div class="figure-instruction">
+        INSERT IMAGE HERE: Screenshot of Test & Score widget showing performance metrics<br>
+        To add your image: Replace this entire div with:<br>
+        &lt;img src="path/to/test-score-screenshot.png" alt="Test and Score Results"&gt;
+      </div>
+      <p class="figure-caption">Test and Score widget output displaying comparative performance metrics for both algorithms.</p>
+    </div>
+
+    <h3>Key Findings</h3>
+
+    <div class="highlight-box">
+      <h3>Finding 1: Random Forest Superiority</h3>
+      <p>Random Forest outperformed k-NN on all evaluated metrics:</p>
+      <ul>
+        <li><strong>Accuracy:</strong> 97.8% compared to k-NN's 95.0%</li>
+        <li><strong>F1-Score:</strong> 0.976 versus 0.948</li>
+        <li><strong>Matthew's Correlation Coefficient:</strong> 0.972 versus 0.935</li>
+      </ul>
+      <p>This indicates that Random Forest provides more reliable predictions and reduces misclassification of network traffic.</p>
+    </div>
+
+    <div class="highlight-box">
+      <h3>Finding 2: Strong Detection of Common Attack Classes</h3>
+      <p>The confusion matrices reveal strong detection of common attack classes:</p>
+      <ul>
+        <li><strong>Normal Traffic:</strong> Random Forest correctly classified 32,505 instances; k-NN classified 32,710</li>
+        <li><strong>Neptune Attacks (DoS):</strong> Random Forest correctly classified 15,925 instances; k-NN classified 16,157</li>
+      </ul>
+      <p>However, both algorithms struggle with rare classes (buffer_overflow, loadmodule, phf), reflecting class imbalance. Random Forest consistently achieved higher correct classification counts for minority classes.</p>
+    </div>
+
+    <div class="highlight-box">
+      <h3>Finding 3: Consistent Predictions Across Classes</h3>
+      <p>Random Forest shows more consistent predictions across all classes. For example, R2L attacks are better identified by Random Forest with fewer misclassifications, whereas k-NN exhibits higher misclassification rates in these minority classes.</p>
+    </div>
+
+    <div class="highlight-box">
+      <h3>Finding 4: Computational Trade-offs</h3>
+      <p>While k-NN is computationally simpler during training, it requires more memory and time during inference due to distance calculations across the dataset. Random Forest, despite slightly longer training, provides faster and more robust predictions for real-time applications.</p>
+    </div>
+
+    <div class="figure">
+      <span class="figure-label">Appendix A.2: k-NN Confusion Matrix</span>
+      <div class="figure-instruction">
+        INSERT IMAGE HERE: Confusion matrix for k-NN classifier<br>
+        To add your image: Replace this entire div with:<br>
+        &lt;img src="path/to/knn-confusion-matrix.png" alt="k-NN Confusion Matrix"&gt;
+      </div>
+      <p class="figure-caption">Confusion matrix for k-NN showing classification results across attack types. Higher off-diagonal values indicate misclassifications,
