@@ -859,4 +859,66 @@
       draw() {
         ctx.fillStyle = this.color;
         ctx.beginPath();
-        ctx.arc(this.x, this
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = this.color;
+      }
+    }
+    
+    const particles = [];
+    for (let i = 0; i < 50; i++) {
+      particles.push(new Particle());
+    }
+    
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(particle => {
+        particle.update();
+        particle.draw();
+      });
+      requestAnimationFrame(animate);
+    }
+    
+    animate();
+    
+    document.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    });
+    
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+
+    // Tab switching
+    window.addEventListener('DOMContentLoaded', function() {
+      console.log('Script loaded');
+      const tabs = document.querySelectorAll('.tab');
+      console.log('Found tabs:', tabs.length);
+      
+      tabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+          console.log('Tab clicked:', this.getAttribute('data-tab'));
+          const tabName = this.getAttribute('data-tab');
+          
+          // Hide all content
+          document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.remove('active');
+          });
+          
+          // Remove active from all tabs
+          document.querySelectorAll('.tab').forEach(t => {
+            t.classList.remove('active');
+          });
+          
+          // Show selected content and activate tab
+          document.getElementById(tabName).classList.add('active');
+          this.classList.add('active');
+        });
+      });
+    });
+  </script>
+</body>
+</html>
