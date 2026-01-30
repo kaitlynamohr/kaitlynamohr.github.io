@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sports Toxicity Index: Data-Driven Athletic Risk Assessment | Kaitlyn Mohr</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-primary: #0a0a0a;
+      --bg-secondary: #1a1a1a;
+      --bg-tertiary: #252525;
+      --text-primary: #f5f5f5;
+      --text-secondary: #e5e5e0;
+      --accent-red: #ff4757;
+      --accent-amber: #ffa502;
+      --border: #333;
+      --glow-red: rgba(255, 71, 87, 0.3);
+      --glow-amber: rgba(255, 165, 2, 0.3);
+    }
+
+    body {
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.8;
+      overflow-x: hidden;
+    }
+
+    p, li {
+      text-shadow: 0 0 1px rgba(255, 255, 255, 0.1);
+    }
+
+    .animated-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      background: 
+        radial-gradient(ellipse at 20% 30%, var(--glow-red) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 70%, var(--glow-amber) 0%, transparent 50%),
+        var(--bg-primary);
+    }
+
+    #particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: rgba(26, 26, 26, 0.7);
+      border-bottom: 1px solid rgba(255, 71, 87, 0.2);
+      z-index: 1000;
+      backdrop-filter: blur(20px) saturate(180%);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+
+    .nav-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 1.5rem 2rem;
+    }
+
+    .back-link {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.3s;
+      font-weight: 600;
+    }
+
+    .back-link:hover {
+      color: var(--accent-amber);
+      text-shadow: 0 0 10px var(--glow-amber);
+    }
+
+    main {
+      max-width: 1000px;
+      margin: 120px auto 4rem;
+      padding: 0 2rem;
+    }
+
+    .page-header {
+      margin-bottom: 3rem;
+      padding-bottom: 2rem;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .report-meta {
+      display: flex;
+      gap: 2rem;
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      flex-wrap: wrap;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .meta-label {
+      color: var(--accent-amber);
+      font-weight: 600;
+    }
+
+    h1 {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+      line-height: 1.2;
+    }
+
+    .subtitle {
+      font-size: 1.25rem;
+      color: var(--text-secondary);
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .tag {
+      padding: 0.5rem 1rem;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    h2 {
+      font-size: 2rem;
+      margin: 3rem 0 1.5rem;
+      color: var(--text-primary);
+      position: relative;
+      padding-left: 1rem;
+      border-left: 3px solid var(--accent-red);
+    }
+
+    h3 {
+      font-size: 1.5rem;
+      margin: 2rem 0 1rem;
+      color: var(--accent-amber);
+    }
+
+    h4 {
+      font-size: 1.2rem;
+      margin: 1.5rem 0 0.75rem;
+      color: var(--text-primary);
+    }
+
+    p {
+      margin-bottom: 1.5rem;
+      color: var(--text-secondary);
+      font-size: 1.05rem;
+      background: rgba(26, 26, 26, 0.4);
+      padding: 1rem 1.5rem;
+      border-radius: 6px;
+      backdrop-filter: blur(5px);
+    }
+
+    ul, ol {
+      margin: 1.5rem 0;
+      padding-left: 2rem;
+      color: var(--text-secondary);
+      background: rgba(26, 26, 26, 0.4);
+      padding: 1rem 1.5rem 1rem 3rem;
+      border-radius: 6px;
+      backdrop-filter: blur(5px);
+    }
+
+    li {
+      margin-bottom: 0.75rem;
+    }
+
+    strong {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    em {
+      color: var(--accent-amber);
+      font-style: italic;
+    }
+
+    .highlight-box {
+      background: rgba(26, 26, 26, 0.6);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent-amber);
+      border-radius: 8px;
+      padding: 2rem;
+      margin: 2rem 0;
+      backdrop-filter: blur(10px);
+    }
+
+    .highlight-box h3 {
+      margin-top: 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 2rem 0;
+      background: rgba(26, 26, 26, 0.6);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+    }
+
+    thead {
+      background: var(--bg-tertiary);
+    }
+
+    th {
+      padding: 1rem;
+      text-align: left;
+      color: var(--accent-amber);
+      font-weight: 600;
+      border-bottom: 2px solid var(--border);
+    }
+
+    td {
+      padding: 1rem;
+      color: var(--text-secondary);
+      border-bottom: 1px solid var(--border);
+      font-size: 0.95rem;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tbody tr:hover {
+      background: rgba(37, 37, 37, 0.6);
+    }
+
+    .table-caption {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      font-style: italic;
+      margin-top: 1rem;
+      background: rgba(26, 26, 26, 0.4);
+      padding: 1rem 1.5rem;
+      border-radius: 6px;
+    }
+
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2rem;
+      }
+
+      h2 {
+        font-size: 1.5rem;
+      }
+
+      .report-meta {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="animated-bg"></div>
+  <canvas id="particles"></canvas>
+
+  <nav>
+    <div class="nav-container">
+      <a href="/" class="back-link">← Back to Research</a>
+    </div>
+  </nav>
+
+  <main>
+    <div class="page-header">
+      <div class="report-meta">
+        <div class="meta-item">
+          <span class="meta-label">Date:</span>
+          <span>November 21, 2025</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Category:</span>
+          <span>Data Analysis</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Course:</span>
+          <span>DAT 310: Data Management & Visualization</span>
+        </div>
+      </div>
+      <h1>Sports Toxicity Index: Data-Driven Athletic Risk Assessment</h1>
+      <p class="subtitle">Quantifying vulnerability across sport types through academic performance, retention rates, and demographic analysis</p>
+      <div class="tags">
+        <span class="tag">Data Analytics</span>
+        <span class="tag">Statistical Analysis</span>
+        <span class="tag">Bayesian ANOVA</span>
+        <span class="tag">Risk Assessment</span>
+      </div>
+    </div>
+
+    <h2>Executive Summary</h2>
+    <p>This analysis examines 944 student-athletes at Heidelberg University to identify which sports create the highest academic and retention risks. The findings reveal that contact sport athletes stay with programs more than twice as long as non-contact athletes (7.09 vs. 3.76 semesters), and team sports demonstrate nearly three times the stability of individual sports (8.87 vs. 2.98 semesters). The highest-risk populations include football/track multi-sport athletes (GPAs 2.6-3.2, 25% quit rate), Pell-eligible students concentrated in single sports (43.1%) with limited support networks, and individual sport athletes facing the greatest program instability.</p>
+
+    <h2>Dataset and Methodology</h2>
+
+    <h3>Sample Characteristics</h3>
+    <p>The dataset includes 944 returning student-athletes from the 2025 school year, predominantly from Ohio (80.5%). Key variables analyzed included Term GPA (M = 3.13, SD = 0.85), Cumulative GPA (M = 3.17, SD = 0.74), sport status, coach tenure, and demographic factors. The population was 54.2% male, 82.5% Caucasian, with 43.6% Pell-eligible and 35% first-generation students. Sport participation breakdown: 61.4% active in at least one sport, 38.6% no sport, 7.1% quit, and 0.2% injured.</p>
+
+    <h3>Toxicity Score Calculation</h3>
+    <p>The toxicity framework quantified vulnerability across three dimensions: academic risk (0-3 scale based on inverse coach tenure relationship), quit risk (0-3 scale based on sport-specific quit rates), and physical risk (0-3 scale based on contact sport classification). Each sport category received a total toxicity score combining these factors with mean coach tenure data.</p>
+
+    <h2>Key Findings</h2>
+
+    <h3>Finding 1: Contact vs. Non-Contact Sports</h3>
+    <p>An independent samples t-test revealed contact sports (M = 7.09, SD = 4.086, n = 331) demonstrated significantly higher coach tenure than non-contact sports (M = 3.76, SD = 6.059, n = 779). The mean difference of 3.335 semesters (95% CI: 2.621-4.049) showed a medium-large effect size (Cohen's d = 0.601, p < 0.001). Contact sports appear to provide stronger team atmospheres or support structures promoting persistence.</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Sport Type</th>
+          <th>n</th>
+          <th>Mean Tenure</th>
+          <th>SD</th>
+          <th>95% CI</th>
+          <th>Effect Size</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Contact Sports</strong></td>
+          <td>331</td>
+          <td>7.09</td>
+          <td>4.086</td>
+          <td>6.65 – 7.53</td>
+          <td>d = 0.601***</td>
+        </tr>
+        <tr>
+          <td><strong>Non-Contact Sports</strong></td>
+          <td>779</td>
+          <td>3.76</td>
+          <td>6.059</td>
+          <td>3.33 – 4.19</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td><strong>Mean Difference</strong></td>
+          <td>—</td>
+          <td>3.335*</td>
+          <td>—</td>
+          <td>2.621 – 4.049</td>
+          <td>—</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="table-caption">*p < .001. Cohen's d indicates medium-large effect size.</p>
+
+    <h3>Finding 2: Sport Category Stability</h3>
+    <p>Bayesian ANOVA testing on sport categories showed team sports (M = 8.874, 95% CI: 8.509-9.238) had nearly three times the coaching stability of individual sports (M = 2.982, 95% CI: 2.356-3.609). Performance sports fell in between (M = 4.0, 95% CI: 3.014-4.986). Individual sport athletes face the highest program instability and would benefit from enhanced mentoring and peer networks to compensate for lack of built-in team support.</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Sport Category</th>
+          <th>n</th>
+          <th>Mean Coach Tenure</th>
+          <th>95% Credible Interval</th>
+          <th>Academic Risk Score</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Team</strong></td>
+          <td>580</td>
+          <td>8.874</td>
+          <td>8.509 – 9.238</td>
+          <td>0 (lowest)</td>
+        </tr>
+        <tr>
+          <td><strong>Performance</strong></td>
+          <td>180</td>
+          <td>4.000</td>
+          <td>3.014 – 4.986</td>
+          <td>2 (moderate)</td>
+        </tr>
+        <tr>
+          <td><strong>Individual</strong></td>
+          <td>120</td>
+          <td>2.982</td>
+          <td>2.356 – 3.609</td>
+          <td>3 (highest)</td>
+        </tr>
+        <tr>
+          <td><strong>No Sport</strong></td>
+          <td>364</td>
+          <td>0.000</td>
+          <td>-0.429 – 0.429</td>
+          <td>4 (baseline)</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="table-caption">Higher coach tenure indicates greater program stability. Academic risk scored inversely to tenure (0-3 scale).</p>
+
+    <h3>Finding 3: Pell Eligibility and Sport Participation</h3>
+    <p>Pell-eligible students (43.6% of population, n = 412) were overwhelmingly concentrated in single-sport participation (n = 359, 43.1%) compared to multi-sport participation. Financially disadvantaged students lack the diversification and support systems that multi-sport athletes enjoy, creating vulnerability when concentrated in high-risk categories like individual sports.</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Number of Sports</th>
+          <th>Pell-Eligible n (%)</th>
+          <th>Non-Eligible n (%)</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>1 Sport</strong></td>
+          <td>359 (43.1%)</td>
+          <td>474 (56.9%)</td>
+          <td>833</td>
+        </tr>
+        <tr>
+          <td><strong>2 Sports</strong></td>
+          <td>25 (43.9%)</td>
+          <td>32 (56.1%)</td>
+          <td>57</td>
+        </tr>
+        <tr>
+          <td><strong>3 Sports</strong></td>
+          <td>25 (50%)</td>
+          <td>25 (50%)</td>
+          <td>50</td>
+        </tr>
+        <tr>
+          <td><strong>4 Sports</strong></td>
+          <td>0 (0%)</td>
+          <td>3 (100%)</td>
+          <td>3</td>
+        </tr>
+        <tr>
+          <td><strong>5 Sports</strong></td>
+          <td>1 (100%)</td>
+          <td>0 (0%)</td>
+          <td>1</td>
+        </tr>
+        <tr>
+          <td><strong>Total</strong></td>
+          <td>412 (43.6%)</td>
+          <td>532 (56.4%)</td>
+          <td>944</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="table-caption">Pell-eligible students concentrated in single sports but represent 50% of three-sport athletes (primarily low-cost track/cross-country).</p>
+
+    <h3>Finding 4: Multi-Sport Athlete Analysis</h3>
+    <p>Analysis of 50 three-sport athletes revealed 80% participated in seasonal variations of the same sports (track/cross-country combinations or cheerleading) rather than true diversification. Notably, 70-80% were first-generation students with 50-60% Pell-eligibility, exceeding the overall sample rate. Women's cross country/track athletes consistently showed GPAs above 3.7, while men's football/track combinations struggled academically (GPAs 2.6-3.2) with higher quit rates, indicating unsustainable academic pressure from year-round contact sport demands.</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Sport Combination</th>
+          <th>n (%)</th>
+          <th>Primary Gender</th>
+          <th>Mean GPA Range</th>
+          <th>First-Gen %</th>
+          <th>Pell %</th>
+          <th>Key Finding</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Cross Country/Track (Men)</strong></td>
+          <td>10 (20%)</td>
+          <td>Male</td>
+          <td>3.2 – 4.0</td>
+          <td>70%</td>
+          <td>60%</td>
+          <td>Moderate GPAs</td>
+        </tr>
+        <tr>
+          <td><strong>Cross Country/Track (Women)</strong></td>
+          <td>14 (28%)</td>
+          <td>Female</td>
+          <td>3.7 – 4.5</td>
+          <td>65%</td>
+          <td>50%</td>
+          <td>Highest GPAs</td>
+        </tr>
+        <tr>
+          <td><strong>Football/Track (Men)</strong></td>
+          <td>13 (26%)</td>
+          <td>Male</td>
+          <td>2.6 – 3.2</td>
+          <td>85%</td>
+          <td>60%</td>
+          <td>Lowest GPAs, higher quit rate</td>
+        </tr>
+        <tr>
+          <td><strong>Cheerleading (Multi-season)</strong></td>
+          <td>10 (20%)</td>
+          <td>Female</td>
+          <td>3.0 – 4.0</td>
+          <td>80%</td>
+          <td>50%</td>
+          <td>Same sport, seasonal variation</td>
+        </tr>
+        <tr>
+          <td><strong>Other Combinations</strong></td>
+          <td>3 (6%)</td>
+          <td>Mixed</td>
+          <td>3.3 – 4.5</td>
+          <td>65%</td>
+          <td>35%</td>
+          <td>Soccer/track, eSports/track</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="table-caption">80% of "three-sport" athletes participate in seasonal variations of the same discipline, not true sport diversification.</p>
+
+    <h2>Comprehensive Toxicity Rankings</h2>
+
+    <h3>Individual Sport Rankings</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Rank</th>
+          <th>Sport</th>
+          <th>Avg TGPA</th>
+          <th>Quit Rate</th>
+          <th>Coach Tenure</th>
+          <th>Physical Demand</th>
+          <th>Toxicity Score</th>
+          <th>Primary Risk Factors</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td><strong>Football/Track (Men)</strong></td>
+          <td>2.6-3.2</td>
+          <td>25%</td>
+          <td>8.5</td>
+          <td>Very High</td>
+          <td>9</td>
+          <td>Contact + year-round</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td><strong>Football</strong></td>
+          <td>2.9-3.0</td>
+          <td>23%</td>
+          <td>8.5</td>
+          <td>Very High</td>
+          <td>8</td>
+          <td>Contact, time demands</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td><strong>Wrestling (Men)</strong></td>
+          <td>2.9</td>
+          <td>20%</td>
+          <td>3.0</td>
+          <td>Very High</td>
+          <td>7</td>
+          <td>Individual + contact, low stability</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td><strong>Basketball (Men)</strong></td>
+          <td>3.0</td>
+          <td>18%</td>
+          <td>8.2</td>
+          <td>High</td>
+          <td>6</td>
+          <td>High quit despite stability</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td><strong>Cross Country/Track (Women)</strong></td>
+          <td>3.5-3.7</td>
+          <td>5%</td>
+          <td>7.4</td>
+          <td>Low</td>
+          <td>2</td>
+          <td>Protective endurance, team support</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="table-caption">Full rankings show Football/Track combination as highest-risk, Women's Cross Country/Track as lowest-risk active sport.</p>
+
+    <h2>Recommendations</h2>
+
+    <div class="highlight-box">
+      <h3>Evidence-Based Interventions</h3>
+      <ul>
+        <li><strong>Individual Sport Athletes:</strong> Implement enhanced mentoring programs and peer connection networks to compensate for lack of built-in team support</li>
+        <li><strong>Male Contact Sport Athletes:</strong> Provide additional academic support and load management, especially for football/track combinations</li>
+        <li><strong>Pell-Eligible Students:</strong> Create peer networks and monitoring systems, as they face compounded financial and academic pressures without alternative athletic communities</li>
+        <li><strong>Co-ed Programs:</strong> Increase program stability support to address 45% lower tenure compared to single-gender sports</li>
+        <li><strong>Three-Sport Athletes:</strong> Monitor for burnout, particularly Pell-eligible students in year-round participation</li>
+      </ul>
+    </div>
+
+    <h2>Conclusion</h2>
+    <p>This analysis established a three-dimensional risk framework (academic, quit, physical) quantifying vulnerability across sport types with robust statistical power (Cohen's d = 0.601). The data preparation process revealed critical quality issues requiring systematic cleaning before analysis, while maintaining ethical protocols for small-sample sport programs to protect athlete privacy. The findings enable evidence-based intervention design targeting the highest-risk 30-40% of the student-athlete population, particularly individual sport athletes, financially disadvantaged students, and multi-sport contact athletes. Future analysis should include longitudinal tracking of quit rates and academic standing to identify specific intervention points, as well as gender-specific analysis within sport categories to understand how gender interacts with sport-specific demands.</p>
+  </main>
+
+  <script>
+    // Particle System - EXACTLY matching the main page
+    const canvas = document.getElementById('particles');
+    const ctx = canvas.getContext('2d');
+    
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    
+    let mouseX = canvas.width / 2;
+    let mouseY = canvas.height / 2;
+    
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 3 + 1;
+        this.speedX = Math.random() * 0.5 - 0.25;
+        this.speedY = Math.random() * 0.5 - 0.25;
+        this.color = Math.random() > 0.5 ? 'rgba(255, 71, 87, 0.6)' : 'rgba(255, 165, 2, 0.6)';
+      }
+      
+      update() {
+        // Drift toward mouse slowly
+        const dx = mouseX - this.x;
+        const dy = mouseY - this.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        
+        if (distance < 200) {
+          this.x += dx * 0.002;
+          this.y += dy * 0.002;
+        }
+        
+        this.x += this.speedX;
+        this.y += this.speedY;
+        
+        // Wrap around edges
+        if (this.x > canvas.width) this.x = 0;
+        if (this.x < 0) this.x = canvas.width;
+        if (this.y > canvas.height) this.y = 0;
+        if (this.y < 0) this.y = canvas.height;
+      }
+      
+      draw() {
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Glow effect
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = this.color;
+      }
+    }
+    
+    const particles = [];
+    for (let i = 0; i < 50; i++) {
+      particles.push(new Particle());
+    }
+    
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(particle => {
+        particle.update();
+        particle.draw();
+      });
+      requestAnimationFrame(animate);
+    }
+    
+    animate();
+    
+    // Track mouse
+    document.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    });
+    
+    // Resize handler
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+  </script>
+</body>
+</html>
